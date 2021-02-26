@@ -1,0 +1,161 @@
+[
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "ID",
+    "expression": "grel:replace(value,\"'\",\"\")",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column ID using expression grel:replace(value,\"'\",\"\")"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "ISSNs",
+    "expression": "grel:replace(value,\"'\",\"\")",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column ISSNs using expression grel:replace(value,\"'\",\"\")"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "OCLCs",
+    "expression": "grel:replace(value,\"'\",\"\")",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column OCLCs using expression grel:replace(value,\"'\",\"\")"
+  },
+  {
+    "op": "core/multivalued-cell-split",
+    "columnName": "OCLCs",
+    "keyColumnName": "ID",
+    "mode": "separator",
+    "separator": ",",
+    "regex": false,
+    "description": "Split multi-valued cells in column OCLCs"
+  },
+  {
+    "op": "core/fill-down",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "Title",
+    "description": "Fill down cells in column Title"
+  },
+  {
+    "op": "core/fill-down",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "ID",
+    "description": "Fill down cells in column ID"
+  },
+  {
+    "op": "core/column-addition-by-fetching-urls",
+    "engineConfig": {
+      "facets": [
+        {
+          "type": "list",
+          "name": "OCLCs",
+          "expression": "isBlank(value)",
+          "columnName": "OCLCs",
+          "invert": false,
+          "omitBlank": false,
+          "omitError": false,
+          "selection": [
+            {
+              "v": {
+                "v": false,
+                "l": "false"
+              }
+            }
+          ],
+          "selectBlank": false,
+          "selectError": false
+        }
+      ],
+      "mode": "row-based"
+    },
+    "baseColumnName": "OCLCs",
+    "urlExpression": "grel:\"http://classify.oclc.org/classify2/Classify?oclc=\" + value + \"&summary=true\"",
+    "onError": "set-to-blank",
+    "newColumnName": "OCLC Classify",
+    "columnInsertIndex": 3,
+    "delay": 300,
+    "cacheResponses": true,
+    "httpHeadersJson": [
+      {
+        "name": "authorization",
+        "value": ""
+      },
+      {
+        "name": "user-agent",
+        "value": "OpenRefine 3.4.1 [437dc4d]"
+      },
+      {
+        "name": "accept",
+        "value": "*/*"
+      }
+    ],
+    "description": "Create column OCLC Classify at index 3 by fetching URLs based on column OCLCs using expression grel:\"http://classify.oclc.org/classify2/Classify?oclc=\" + value + \"&summary=true\""
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [
+        {
+          "type": "list",
+          "name": "OCLCs",
+          "expression": "isBlank(value)",
+          "columnName": "OCLCs",
+          "invert": false,
+          "omitBlank": false,
+          "omitError": false,
+          "selection": [
+            {
+              "v": {
+                "v": false,
+                "l": "false"
+              }
+            }
+          ],
+          "selectBlank": false,
+          "selectError": false
+        }
+      ],
+      "mode": "row-based"
+    },
+    "baseColumnName": "OCLC Classify",
+    "expression": "grel:value.parseHtml().select(\"lcc\")[0].select(\"mostPopular\")[0].htmlAttr(\"nsfa\")",
+    "onError": "set-to-blank",
+    "newColumnName": "OCLC Classify recommendation",
+    "columnInsertIndex": 4,
+    "description": "Create column OCLC Classify recommendation at index 4 based on column OCLC Classify using expression grel:value.parseHtml().select(\"lcc\")[0].select(\"mostPopular\")[0].htmlAttr(\"nsfa\")"
+  },
+  {
+    "op": "core/column-removal",
+    "columnName": "OCLC Classify",
+    "description": "Remove column OCLC Classify"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "OCLC Classify recommendation",
+    "newColumnName": "LC Call #",
+    "description": "Rename column OCLC Classify recommendation to LC Call #"
+  }
+]
